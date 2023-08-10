@@ -1,3 +1,6 @@
+using RData
+using DataFrames
+
 """
     save_choice_data(file)
 
@@ -10,6 +13,26 @@ function save_choice_data(file::String, data)
         T = x.click_data.clicks.T, pokedR = x.choice) for x in data])   
     matwrite(file, rawdata)
 
+end
+
+"""
+load_choice_data_R(file)
+
+Given a path to a ".RDS" file, loads data into an acceptable format for use with the 'pulse_input_DDM' model.
+"""
+function load_choice_data_R(file::String, centered::Bool=false, dt::FLaot64=1e-2)
+    # load file
+    df = load(file)
+    # extract variables
+    T = vec(df.rt)
+    L = vec(df.FlashesLeft)
+    R = vec(df.FlashesRight)
+    choices = vec(df.direction_numeric)
+    # create choiceinputs object
+    the_clicks = clicks.(L, R, T)
+    binned_clicks = bin_clicks.(the_clicks, centered=centered, dt=dt)
+    inputs = map((clicks, binned_clicks)-> choiceinputs(clicks=clicks, binned_clicks=binned_clicks, 
+        dt=dt, centered=centered), theclicks, binned_clicks)
 end
 
 
