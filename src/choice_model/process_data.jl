@@ -20,7 +20,7 @@ load_choice_data_R(file)
 
 Given a path to a ".RDS" file, loads data into an acceptable format for use with the 'pulse_input_DDM' model.
 """
-function load_choice_data_R(file::String, centered::Bool=false, dt::FLaot64=1e-2)
+function load_choice_data_R(file::String, centered::Bool=false, dt::Float64=1e-2)
     # load file
     df = load(file)
     # extract variables

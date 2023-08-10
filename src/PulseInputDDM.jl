@@ -50,7 +50,7 @@ export simulate_expected_firing_rate, reload_neural_data
 export loglikelihood, synthetic_data
 export CIs, optimize, Hessian, gradient
 export load_choice_data, load_neural_data, reload_neural_model, save_neural_model, flatten
-export save, load, reload_choice_model, save_choice_model
+export save, load, reload_choice_model, save_choice_model, load_choice_data_R
 export reload_joint_model
 export initialize_θy, neural_null
 export synthetic_clicks, binLR, bin_clicks
