@@ -25,14 +25,17 @@ function load_choice_data_R(file::String, centered::Bool=false, dt::Float64=1e-2
     df = load(file)
     # extract variables
     T = vec(df.rt)
-    L = vec(df.FlashesLeft)
-    R = vec(df.FlashesRight)
+    # Ensure L and R are treated as vectors of vectors:
+    L = [typeof(x) == Vector{Float64} ? x : [Float64(x)] for x in df[:, :LeftTimestamps]]    
+    R = [typeof(x) == Vector{Float64} ? x : [Float64(x)] for x in df[:, :RightTimestamps]]
     choices = vec(df.direction_numeric)
     # create choiceinputs object
     the_clicks = clicks.(L, R, T)
     binned_clicks = bin_clicks.(the_clicks, centered=centered, dt=dt)
-    inputs = map((clicks, binned_clicks)-> choiceinputs(clicks=clicks, binned_clicks=binned_clicks, 
-        dt=dt, centered=centered), theclicks, binned_clicks)
+    inputs = map((the_clicks, binned_clicks)-> choiceinputs(clicks=the_clicks, binned_clicks=binned_clicks, 
+        dt=dt, centered=centered), the_clicks, binned_clicks)
+    # final product
+    choicedata.(inputs, choices)
 end
 
 
@@ -62,10 +65,11 @@ function load_choice_data(file::String; centered::Bool=false, dt::Float64=1e-2)
         choices = vec(convert(BitArray, [data[i]["pokedR"] for i in 1:length(data)]))
             
     end
+    print(typeof(L))
     
     theclicks = clicks.(L, R, T)
     binned_clicks = bin_clicks.(theclicks, centered=centered, dt=dt)
-    inputs = map((clicks, binned_clicks)-> choiceinputs(clicks=clicks, binned_clicks=binned_clicks, 
+    inputs = map((theclicks, binned_clicks)-> choiceinputs(clicks=theclicks, binned_clicks=binned_clicks, 
         dt=dt, centered=centered), theclicks, binned_clicks)
 
     choicedata.(inputs, choices)
