@@ -409,7 +409,9 @@ function adapt_clicks(ϕ::TT, τ_ϕ::TT, L::Vector{Float64}, R::Vector{Float64};
         La, Ra = ones(TT,length(L)), ones(TT,length(R))
     
         #this if statement is for cases when ϕ is 1. and not being learned
-        if (typeof(ϕ) == Float64) && (isapprox(ϕ, 1.0))
+        # if (typeof(ϕ) == Float64) && (isapprox(ϕ, 1.0))
+        if (isapprox(ϕ, 1.0))
+            print(typeof(ϕ))        
         else
             La[1], Ra[1] = eps(), eps()
             (length(L) > 1 && ϕ != 1.) ? adapt_clicks!(ϕ, τ_ϕ, La, L) : nothing
