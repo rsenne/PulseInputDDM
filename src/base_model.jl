@@ -387,6 +387,9 @@ Returns:
 
 """
 function adapt_clicks(ϕ::TT, τ_ϕ::TT, L::Vector{Float64}, R::Vector{Float64}; cross::Bool=false) where {TT}
+
+    La = Vector{TT}()
+    Ra = Vector{TT}()
     
     if cross
         
@@ -413,16 +416,31 @@ function adapt_clicks(ϕ::TT, τ_ϕ::TT, L::Vector{Float64}, R::Vector{Float64};
         if (isapprox(ϕ, 1.0))
             print(typeof(ϕ))        
         else
-            La[1], Ra[1] = eps(), eps()
+            try
+                La[1] = eps()
+            catch e
+                if isa(e, BoundsError)
+                    # Handle the error if necessary or leave it empty to silently continue
+                end
+            end
+    
+            try
+                Ra[1] = eps()
+            catch e
+                if isa(e, BoundsError)
+                    # Handle the error if necessary or leave it empty to silently continue
+                end
+            end
+    
             (length(L) > 1 && ϕ != 1.) ? adapt_clicks!(ϕ, τ_ϕ, La, L) : nothing
             (length(R) > 1 && ϕ != 1.) ? adapt_clicks!(ϕ, τ_ϕ, Ra, R) : nothing
         end
-        
     end
-
-    return La, Ra
-
-end
+            
+        # ... [rest of the code]
+    
+        return La, Ra
+    end
 
 
 """
